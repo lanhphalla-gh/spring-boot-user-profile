@@ -1,4 +1,4 @@
-package user.profile.authentication.jwt
+package user.profile.configJWT
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts

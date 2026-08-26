@@ -23,14 +23,20 @@ class RoleController(
 ) {
     //GET /api/roles
     @GetMapping("/list")
-    fun getAllRoles(): List<RoleResponse> {
-        return roleService.getAllRoles()
+    fun getAllRoles(): ResponseEntity<ResponseMessageDTO> {
+        val response = roleService.getAllRoles()
+        return ResponseEntity
+            .status(response.code)
+            .body(response)
     }
 
     // GET /api/roles/{id}
     @GetMapping("/{id}")
-    fun getRoleById(@PathVariable id: UUID): RoleResponse {
-        return roleService.getRoleById(id)
+    fun getRoleById(@PathVariable id: UUID): ResponseEntity<ResponseMessageDTO> {
+        val response = roleService.getRoleById(id)
+        return ResponseEntity
+            .status(response.code)
+            .body(response)
     }
 
     // POST /api/roles

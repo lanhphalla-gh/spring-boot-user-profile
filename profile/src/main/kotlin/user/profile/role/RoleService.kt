@@ -2,7 +2,6 @@ package user.profile.role
 import org.springframework.stereotype.Service
 import user.profile.messageDTO.ResponseMessageDTO
 import user.profile.role.dto.RoleRequest
-import user.profile.role.dto.RoleResponse
 import java.util.UUID
 
 @Service
@@ -10,20 +9,36 @@ class RoleService(
     private val roleRepository: RoleRepository
 ) {
     // GET ALL
-    fun getAllRoles(): List<RoleResponse> {
-        return roleRepository.findAll().map { role ->
-            role.toResponse()
-        }
+    fun getAllRoles(): ResponseMessageDTO {
+        val role = roleRepository.findAll()
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "Role get successfully",
+            data = role
+        )
     }
 
     // GET BY ID
-    fun getRoleById(id: UUID): RoleResponse {
+    fun getRoleById(id: UUID): ResponseMessageDTO {
         val role = roleRepository.findById(id)
-            .orElseThrow {
-                RuntimeException("Role not found with id: $id")
-            }
+            .orElse(null)
+        if (role == null) {
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "Role Not Found",
+            )
+        }
 
-        return role.toResponse()
+        val response = roleRepository.findById(id)
+
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "Role get successfully",
+            data = response
+        )
     }
 
     // CREATE
@@ -111,15 +126,6 @@ class RoleService(
             code = 200,
             message = "Role deleted successfully",
             data = response
-        )
-    }
-
-    // ENTITY → RESPONSE
-    private fun Role.toResponse(): RoleResponse {
-
-        return RoleResponse(
-            id = this.id!!,
-            name = this.name
         )
     }
 }

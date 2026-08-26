@@ -1,9 +1,11 @@
-package user.profile.authentication.jwt
+package user.profile.configJWT
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
@@ -11,6 +13,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig(
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
 ) {
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
+    }
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -22,9 +29,9 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/api/auth/login").permitAll()
-                    .requestMatchers("/api/users/**").authenticated()
-                    .requestMatchers("/api/roles/**").authenticated()
-                    .requestMatchers("/api/permissions/**").authenticated()
+                    .requestMatchers("/api/user/**").authenticated()
+                    .requestMatchers("/api/role/**").authenticated()
+                    .requestMatchers("/api/permission/**").authenticated()
                     .requestMatchers("/api/role-permission/**").authenticated()
 //                    .anyRequest().authenticated()
             }

@@ -2,7 +2,7 @@ package user.profile.authentication.login.service
 
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import user.profile.authentication.jwt.JwtService
+import user.profile.configJWT.JwtService
 import user.profile.authentication.login.loginDTO.LoginRequestDTO
 import user.profile.authentication.login.loginDTO.LoginResponseDTO
 import user.profile.authentication.login.repository.LoginRepository

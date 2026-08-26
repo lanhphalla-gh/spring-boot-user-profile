@@ -1,4 +1,4 @@
-package user.profile.authentication.jwt
+package user.profile.configJWT
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

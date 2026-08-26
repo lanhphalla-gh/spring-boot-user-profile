@@ -3,13 +3,11 @@ package user.profile.user
 import org.springframework.stereotype.Service
 import user.profile.role.RoleRepository
 import user.profile.user.dto.CreateUserRequestDTO
-import user.profile.user.dto.UserResponseDTO
 import user.profile.user.dto.UpdatePasswordRequestDTO
 import user.profile.user.dto.UpdateUserRequestDTO
 import java.util.UUID
 import org.springframework.security.crypto.password.PasswordEncoder
 import user.profile.messageDTO.ResponseMessageDTO
-import user.profile.user.mapper.toResponse
 
 @Service
 class UserService(
@@ -18,45 +16,61 @@ class UserService(
     private val passwordEncoder: PasswordEncoder
 ) {
     // GET all users
-    fun getAllUsers(): List<UserResponseDTO> {
-        return userRepository.findAll().map { user ->
-            user.toResponse()
-        }
+    fun getAllUsers(): ResponseMessageDTO {
+        val saveUser = userRepository.findAll()
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "User get successfully",
+            data = saveUser
+        )
+
     }
 
     // GET user by ID
-    fun getUserById(id: UUID): UserResponseDTO {
+    fun getUserById(id: UUID): ResponseMessageDTO {
 
         val user = userRepository.findById(id)
-            .orElseThrow {
-                RuntimeException("User not found with id: $id")
-            }
-        return user.toResponse()
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "User get successfully",
+            data = user
+        )
     }
 
     // CREATE user
-    fun createUser(request: CreateUserRequestDTO): UserResponseDTO {
+    fun createUser(request: CreateUserRequestDTO): ResponseMessageDTO {
 
         // Check username
         if (userRepository.existsByUsername(request.username)) {
-            throw RuntimeException(
-                "Username already exists: ${request.username}"
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "User already exists"
             )
         }
 
         // Check email
         if (userRepository.existsByEmail(request.email)) {
-            throw RuntimeException(
-                "Email already exists: ${request.email}"
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "Email already exists"
             )
         }
 
         // Find role
         val role = request.roleId?.let { roleId ->
             roleRepository.findById(roleId)
-                .orElseThrow {
-                    RuntimeException("Role not found with id: $roleId")
-                }
+                .orElse(null)
+        }
+        if (role != null) {
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "Role with the same name already exists"
+            )
         }
 
         // Create user
@@ -69,44 +83,55 @@ class UserService(
 
         // Save user
         val savedUser = userRepository.save(user)
-        return savedUser.toResponse()
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "User created successfully",
+            data = savedUser
+        )
     }
 
     // UPDATE user
     fun updateUser(
         id: UUID,
         request: UpdateUserRequestDTO
-    ): UserResponseDTO {
+    ): ResponseMessageDTO {
 
         val user = userRepository.findById(id)
-            .orElseThrow {
-                RuntimeException("User not found with id: $id")
-            }
-
-        // Find role
-        val role = request.roleId?.let { roleId ->
-            roleRepository.findById(roleId)
-                .orElseThrow {
-                    RuntimeException("Role not found with id: $roleId")
-                }
+            .orElse(null)
+        if (user == null) {
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "User does not exists"
+            )
         }
 
         // Update fields
         user.username = request.username
         user.email = request.email
-        user.role = role
 
         // Save
         val updatedUser = userRepository.save(user)
-        return updatedUser.toResponse()
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "User updated successfully",
+            data = updatedUser
+        )
     }
 
     // UPDATE user password
     fun updatePassword(id: UUID, request: UpdatePasswordRequestDTO): ResponseMessageDTO {
         val user = userRepository.findById(id)
-            .orElseThrow {
-                RuntimeException("User not found with id: $id")
-            }
+            .orElse(null)
+        if (user == null) {
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "User does not exists"
+            )
+        }
 
         // 1. Check current password
         if (!passwordEncoder.matches(
@@ -114,17 +139,23 @@ class UserService(
                 user.password
             )
         ) {
-            throw RuntimeException("Current password is incorrect")
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "Current password is incorrect"
+            )
         }
 
-        // 2. Check new password is different
+        // 2. Check new password is different from current password
         if (passwordEncoder.matches(
                 request.newPassword,
                 user.password
             )
         ) {
-            throw RuntimeException(
-                "New password must be different from current password"
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "New password must be different from current password"
             )
         }
 
@@ -143,14 +174,24 @@ class UserService(
     }
 
     // DELETE user
-    fun deleteUser(id: UUID) {
-
-        if (!userRepository.existsById(id)) {
-            throw RuntimeException(
-                "User not found with id: $id"
+    fun deleteUser(id: UUID): ResponseMessageDTO {
+        print("User ID delete =>>  $id")
+        val user = userRepository.findById(id)
+            .orElse(null)
+        if (user == null) {
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "User does not exists"
             )
         }
-        userRepository.deleteById(id)
+
+        userRepository.delete(user)
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "User deleted successfully"
+        )
     }
 }
 
