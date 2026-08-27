@@ -8,6 +8,8 @@ import user.profile.user.dto.UpdateUserRequestDTO
 import java.util.UUID
 import org.springframework.security.crypto.password.PasswordEncoder
 import user.profile.messageDTO.ResponseMessageDTO
+import user.profile.user.dto.ApplyRoleRequest
+import user.profile.user.mapper.toResponse
 
 @Service
 class UserService(
@@ -17,12 +19,12 @@ class UserService(
 ) {
     // GET all users
     fun getAllUsers(): ResponseMessageDTO {
-        val saveUser = userRepository.findAll()
+        val user = userRepository.findAll()
         return ResponseMessageDTO(
             status = "Success",
             code = 200,
             message = "User get successfully",
-            data = saveUser
+            data = user.map { it.toResponse() }
         )
 
     }
@@ -31,11 +33,19 @@ class UserService(
     fun getUserById(id: UUID): ResponseMessageDTO {
 
         val user = userRepository.findById(id)
+            .orElse(null)
+        if (user == null) {
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "User not found",
+            )
+        }
         return ResponseMessageDTO(
             status = "Success",
             code = 200,
             message = "User get successfully",
-            data = user
+            data = user.toResponse()
         )
     }
 
@@ -175,7 +185,6 @@ class UserService(
 
     // DELETE user
     fun deleteUser(id: UUID): ResponseMessageDTO {
-        print("User ID delete =>>  $id")
         val user = userRepository.findById(id)
             .orElse(null)
         if (user == null) {
@@ -193,5 +202,37 @@ class UserService(
             message = "User deleted successfully"
         )
     }
+
+    // APPLY ROLE TO USER
+    fun applyRoleToUser(request: ApplyRoleRequest): ResponseMessageDTO {
+        val user = userRepository.findById(request.userId)
+            .orElse(null)
+        if (user == null) {
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "User not found with id: $user"
+            )
+        }
+        val role = roleRepository.findById(request.roleId)
+            .orElse(null)
+        if (role == null) {
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "Role not found with id: $role"
+            )
+        }
+
+        // Apply role to user
+        user.role = role
+        userRepository.save(user)
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "Role applied to user successfully"
+        )
+    }
+
 }
 

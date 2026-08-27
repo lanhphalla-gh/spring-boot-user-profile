@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import user.profile.messageDTO.ResponseMessageDTO
+import user.profile.user.dto.ApplyRoleRequest
 import user.profile.user.dto.CreateUserRequestDTO
 import user.profile.user.dto.UpdatePasswordRequestDTO
 import user.profile.user.dto.UpdateUserRequestDTO
@@ -76,6 +77,17 @@ class UserController(private val userService: UserService) {
     @DeleteMapping("/delete/{id}")
     fun deleteUser(@PathVariable id: UUID): ResponseEntity<ResponseMessageDTO> {
         val response = userService.deleteUser(id)
+        return ResponseEntity
+            .status(response.code)
+            .body(response)
+    }
+
+    // APPLY ROLE TO USER
+    @PutMapping("apply-role")
+    fun applyRoleToUser(
+        @RequestBody request: ApplyRoleRequest
+    ): ResponseEntity<ResponseMessageDTO> {
+        val response = userService.applyRoleToUser(request)
         return ResponseEntity
             .status(response.code)
             .body(response)
