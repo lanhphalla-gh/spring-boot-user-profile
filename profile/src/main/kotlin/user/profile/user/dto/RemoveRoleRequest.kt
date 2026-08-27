@@ -1,3 +1,8 @@
 package user.profile.user.dto
 
-data class RemoveRoleRequest()
+import java.util.UUID
+
+data class RemoveRoleRequest(
+    val userId: UUID,
+    val roleId: UUID
+)

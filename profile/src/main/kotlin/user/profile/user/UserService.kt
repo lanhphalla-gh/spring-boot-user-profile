@@ -9,6 +9,7 @@ import java.util.UUID
 import org.springframework.security.crypto.password.PasswordEncoder
 import user.profile.messageDTO.ResponseMessageDTO
 import user.profile.user.dto.ApplyRoleRequest
+import user.profile.user.dto.RemoveRoleRequest
 import user.profile.user.mapper.toResponse
 
 @Service
@@ -231,6 +232,26 @@ class UserService(
             status = "Success",
             code = 200,
             message = "Role applied to user successfully"
+        )
+    }
+
+    // REMOVE ROLE FROM USER
+    fun removeRoleFromUser(request: RemoveRoleRequest): ResponseMessageDTO {
+        val user = userRepository.findById(request.userId)
+        .orElse(null)
+        if (user == null) {
+            return ResponseMessageDTO(
+                status = "Error",
+                code = 400,
+                message = "User not found with id: $user"
+            )
+        }
+        user.role = null
+        userRepository.save(user)
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "Role removed from user successfully"
         )
     }
 

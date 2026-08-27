@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 import user.profile.messageDTO.ResponseMessageDTO
 import user.profile.user.dto.ApplyRoleRequest
 import user.profile.user.dto.CreateUserRequestDTO
+import user.profile.user.dto.RemoveRoleRequest
 import user.profile.user.dto.UpdatePasswordRequestDTO
 import user.profile.user.dto.UpdateUserRequestDTO
 import java.util.UUID
@@ -88,6 +89,17 @@ class UserController(private val userService: UserService) {
         @RequestBody request: ApplyRoleRequest
     ): ResponseEntity<ResponseMessageDTO> {
         val response = userService.applyRoleToUser(request)
+        return ResponseEntity
+            .status(response.code)
+            .body(response)
+    }
+
+    // REMOVE ROLE FROM USER
+    @PutMapping("remove-role")
+    fun removeRoleFromUser(
+        @RequestBody request: RemoveRoleRequest
+    ): ResponseEntity<ResponseMessageDTO> {
+        val response = userService.removeRoleFromUser(request)
         return ResponseEntity
             .status(response.code)
             .body(response)
