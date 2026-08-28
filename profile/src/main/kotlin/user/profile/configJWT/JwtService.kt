@@ -3,16 +3,21 @@ package user.profile.configJWT
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.util.Date
 import java.util.UUID
 import javax.crypto.SecretKey
 
 @Service
-class JwtService {
+class JwtService(
+    @Value("\${jwt.secret}")
+    private val jwtSecret: String
+) {
+
     private val secretKey: SecretKey =
         Keys.hmacShaKeyFor(
-            "my-super-secret-key-for-jwt-token-generation-123456".toByteArray()
+            jwtSecret.toByteArray()
         )
 
     private val expirationTime = 1000 * 60 * 60 // 1 hour
@@ -40,29 +45,7 @@ class JwtService {
         return try {
             extractAllClaims(token).subject
         } catch (e: Exception) {
-            null
-        }
-    }
-
-    // Extract user ID from JWT
-    fun extractUserId(token: String): UUID? {
-        return try {
-            val userId = extractAllClaims(token)
-                .get("userId", String::class.java)
-
-            UUID.fromString(userId)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    // Extract role from JWT
-    fun extractRole(token: String): String? {
-        return try {
-            extractAllClaims(token)
-                .get("role", String::class.java)
-        } catch (e: Exception) {
-            null
+            e.message ?: return null
         }
     }
 
