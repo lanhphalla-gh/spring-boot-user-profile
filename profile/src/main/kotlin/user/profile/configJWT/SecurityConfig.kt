@@ -22,6 +22,7 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
 
+            .core{ }
             .csrf {it.disable()}
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
