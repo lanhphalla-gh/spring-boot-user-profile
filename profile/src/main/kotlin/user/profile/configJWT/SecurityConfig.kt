@@ -22,7 +22,7 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
 
-            .core{ }
+            .cors {  }
             .csrf {it.disable()}
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
