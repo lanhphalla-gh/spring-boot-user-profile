@@ -28,7 +28,7 @@ class SecurityConfig(
             }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/api/auth/login").permitAll()
+                    .requestMatchers("/", "/api/auth/login").permitAll()
                     .requestMatchers("/api/user/**").authenticated()
                     .requestMatchers("/api/role/**").authenticated()
                     .requestMatchers("/api/permission/**").authenticated()
