@@ -61,4 +61,12 @@ class RolePermissionController(
             .status(response.code)
             .body(response)
     }
+
+    @GetMapping("/count")
+    fun getRolePermissionCount(): ResponseEntity<Long> {
+
+        val count = rolePermissionService.getRolePermissionCount()
+
+        return ResponseEntity.ok(count)
+    }
 }

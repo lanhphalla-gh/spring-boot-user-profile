@@ -148,4 +148,8 @@ class RolePermissionService(
         )
     }
 
+    fun getRolePermissionCount(): Long {
+        return rolePermissionRepository.count()
+    }
+
 }

@@ -104,4 +104,12 @@ class UserController(private val userService: UserService) {
             .status(response.code)
             .body(response)
     }
+
+    @GetMapping("/count")
+    fun getUserCount(): ResponseEntity<Long> {
+
+        val count = userService.getUserCount()
+
+        return ResponseEntity.ok(count)
+    }
 }

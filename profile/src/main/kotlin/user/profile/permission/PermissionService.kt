@@ -138,4 +138,8 @@ class PermissionService(
             name = this.name
         )
     }
+
+    fun getPermissionCount(): Long {
+        return permissionRepository.count()
+    }
 }

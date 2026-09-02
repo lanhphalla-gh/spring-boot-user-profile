@@ -73,4 +73,12 @@ class RoleController(
             .status(response.code)
             .body(response)
     }
+
+    @GetMapping("/count")
+    fun getRoleCount(): ResponseEntity<Long> {
+
+        val count = roleService.getRoleCount()
+
+        return ResponseEntity.ok(count)
+    }
 }

@@ -128,4 +128,8 @@ class RoleService(
             data = response
         )
     }
+
+    fun getRoleCount(): Long {
+        return roleRepository.count()
+    }
 }

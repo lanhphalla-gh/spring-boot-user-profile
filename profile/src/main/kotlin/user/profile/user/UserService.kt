@@ -255,5 +255,9 @@ class UserService(
         )
     }
 
+    fun getUserCount(): Long {
+        return userRepository.count()
+    }
+
 }
 
