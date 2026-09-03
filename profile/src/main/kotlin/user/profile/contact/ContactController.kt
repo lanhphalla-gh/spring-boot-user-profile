@@ -8,12 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping(path = arrayOf("/api/contact-admin"))
+@RequestMapping("/api/contactadmin")
 class ContactController(
     private val contactEmailService: ContactEmailService
 ) {
     private val logger =
         LoggerFactory.getLogger(ContactController::class.java)
+
     @PostMapping
     fun contactAdmin(
         @RequestBody request: ContactRequest
