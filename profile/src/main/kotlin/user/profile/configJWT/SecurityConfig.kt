@@ -45,7 +45,7 @@ class SecurityConfig(
                     .requestMatchers(
                         "/",
                         "/api/auth/login",
-                        "/api/auth/register"
+                        "/api/contact-admin"
                     ).permitAll()
                     .requestMatchers("/api/user/**").authenticated()
                     .requestMatchers("/api/role/**").authenticated()
