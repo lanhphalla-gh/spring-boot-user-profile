@@ -5,11 +5,13 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 // Marks this class as a REST controller.
 // Spring Boot will automatically create a controller bean for it.
 @RestController
+@RequestMapping("/api/auth")
 class LogoutController {
 
     // Handles POST requests to /logout
