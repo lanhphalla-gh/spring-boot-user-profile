@@ -20,6 +20,7 @@ class ContactService(
         contactRequest.email = request.email
         contactRequest.username = request.username
         contactRequest.message = request.message
+        contactRequest.status = "PENDING"
 
         // Save request to database
         val savedRequest = contactRepository.save(contactRequest)
