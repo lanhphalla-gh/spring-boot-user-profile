@@ -1,6 +1,6 @@
-package user.profile.contact
+package user.profile.contact.contactDTO
 
-data class ContactRequest(
+data class ContactRequestDTO(
     val fullName: String,
     val email: String,
     val username: String,

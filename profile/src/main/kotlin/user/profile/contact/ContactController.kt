@@ -6,36 +6,40 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import user.profile.contact.contactDTO.ContactRequestDTO
+import user.profile.contact.contactDTO.ContactResponseDTO
+import user.profile.contact.service.ContactEmailService
+import user.profile.contact.service.ContactService
 
 @RestController
 @RequestMapping("/api/contact-admin")
 class ContactController(
-    private val contactEmailService: ContactEmailService
+    private val contactEmailService: ContactEmailService,
+    private val contactService: ContactService
 ) {
     private val logger =
         LoggerFactory.getLogger(ContactController::class.java)
 
     @PostMapping
     fun contactAdmin(
-        @RequestBody request: ContactRequest
-    ): ResponseEntity<Map<String, String>> {
+        @RequestBody request: ContactRequestDTO
+    ): ResponseEntity<ContactResponseDTO> {
         return try {
+
             logger.info(
                 "Contact request received from email: {}",
                 request.email
             )
 
-            contactEmailService.sendContactRequest(request)
+            val response = contactService.createContactRequest(request)
 
             logger.info(
-                "Contact request email sent successfully"
+                "Contact request created successfully. ID: {}",
+                response.id
             )
 
-            ResponseEntity.ok(
-                mapOf(
-                    "Message" to "Your request has been sent successfully!"
-                )
-            )
+            ResponseEntity.ok(response)
+
         } catch (e: Exception) {
 
             // IMPORTANT: Print the real error in Render logs
@@ -43,11 +47,8 @@ class ContactController(
                 "Failed to send contact request email",
                 e
             )
-            ResponseEntity.internalServerError().body(
-                mapOf(
-                    "message" to "Failed to send your request. Please try again later."
-                )
-            )
+
+            ResponseEntity.internalServerError().build()
         }
 
     }

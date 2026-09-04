@@ -1,9 +1,10 @@
-package user.profile.contact
+package user.profile.contact.service
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
+import user.profile.contact.contactDTO.ContactRequestDTO
 
 @Service
 class ContactEmailService(
@@ -20,7 +21,7 @@ class ContactEmailService(
         .baseUrl("https://api.resend.com")
         .build()
 
-    fun sendContactRequest(request: ContactRequest) {
+    fun sendContactRequestEmail(request: ContactRequestDTO) {
 
         val subject =
             "User Account Request - ${request.username}"
