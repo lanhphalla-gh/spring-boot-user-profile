@@ -15,14 +15,14 @@ import user.profile.contact.service.ContactService
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/contact-admin")
+@RequestMapping("/api")
 class ContactController(
     private val contactService: ContactService
 ) {
     private val logger =
         LoggerFactory.getLogger(ContactController::class.java)
 
-    @PostMapping("contact-request")
+    @PostMapping("/contact-request")
     fun contactAdmin(
         @RequestBody request: ContactRequestDTO
     ): ResponseEntity<ContactResponseDTO> {
