@@ -62,7 +62,7 @@ class SecurityConfig(
                     .requestMatchers(
                         "/",
                         "/api/auth/login",
-                        "/api/contact-admin"
+                        "/api/contact-request"
                     ).permitAll()
 
                     // User management requires authentication.
