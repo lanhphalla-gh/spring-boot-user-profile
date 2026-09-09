@@ -1,5 +1,5 @@
 package user.profile.role.dto
 
-class RoleRequest (
+class RoleRequestDTO (
     val name: String,
 )

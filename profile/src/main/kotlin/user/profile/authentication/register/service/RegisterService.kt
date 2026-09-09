@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service
 import user.profile.authentication.register.dto.RegisterRequest
 import user.profile.authentication.register.repository.RegisterRepository
 import user.profile.messageDTO.ResponseMessageDTO
-import user.profile.role.Role
+import user.profile.role.RoleEntity
 import user.profile.role.RoleRepository
-import user.profile.user.User
+import user.profile.user.UserEntity
 
 @Service
 class RegisterService (
@@ -39,13 +39,13 @@ class RegisterService (
         val role = request.roleId?.let { roleRepository.findById(it) }
 
         // Create user
-        val user = User();
+        val user = UserEntity();
         user.username = request.username
         user.email = request.email
 
         // IMPORTANT: hash password before saving
         user.password = passwordEncoder.encode(request.password)
-        user.role = role as Role?
+        user.role = role as RoleEntity?
 
         // Save
         registerRepository.save(user)

@@ -1,9 +1,10 @@
 package user.profile.permission
 
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import user.profile.messageDTO.ResponseMessageDTO
-import user.profile.permission.dto.PermissionRequest
-import user.profile.permission.dto.PermissionResponse
+import user.profile.permission.dto.PermissionRequestDTO
+import user.profile.permission.dto.PermissionResponseDTO
 import java.util.UUID
 
 @Service
@@ -11,8 +12,8 @@ class PermissionService(
     private val permissionRepository: PermissionRepository
 ) {
     // GET ALL
-    fun getAllPermissions(): ResponseMessageDTO {
-        val response = permissionRepository.findAll()
+    fun getAllPermissions(pageable: Pageable): ResponseMessageDTO {
+        val response = permissionRepository.findAll(pageable)
         return ResponseMessageDTO (
             status = "Success",
             code = 200,
@@ -44,7 +45,7 @@ class PermissionService(
 
     // CREATE
     fun createPermission(
-        request: PermissionRequest
+        request: PermissionRequestDTO
     ): ResponseMessageDTO {
 
         if (permissionRepository.existsByName(request.name)) {
@@ -53,7 +54,7 @@ class PermissionService(
             )
         }
 
-        val permission = Permission(
+        val permission = PermissionEntity(
             name = request.name
         )
 
@@ -71,7 +72,7 @@ class PermissionService(
     // UPDATE
     fun updatePermission(
         id: UUID,
-        request: PermissionRequest
+        request: PermissionRequestDTO
     ): ResponseMessageDTO {
 
         // 1. Find existing role
@@ -131,9 +132,9 @@ class PermissionService(
     }
 
     // ENTITY → RESPONSE
-    private fun Permission.toResponse(): PermissionResponse {
+    private fun PermissionEntity.toResponse(): PermissionResponseDTO {
 
-        return PermissionResponse(
+        return PermissionResponseDTO(
             id = this.id!!,
             name = this.name
         )

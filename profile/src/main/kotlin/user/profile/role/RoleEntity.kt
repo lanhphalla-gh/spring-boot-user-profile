@@ -10,7 +10,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "roles")
-class Role {
+class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null

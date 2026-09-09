@@ -1,11 +1,11 @@
 package user.profile.authentication.login.loginDTO
 
-import user.profile.permission.dto.PermissionResponse
-import user.profile.role.dto.RoleResponse
+import user.profile.permission.dto.PermissionResponseDTO
+import user.profile.role.dto.RoleResponseDTO
 
 data class LoginResultDTO(
     val username: String,
-    val role: RoleResponse?,
-    val permissions: List<PermissionResponse>,
+    val role: RoleResponseDTO?,
+    val permissions: List<PermissionResponseDTO>,
     val token: String
 )

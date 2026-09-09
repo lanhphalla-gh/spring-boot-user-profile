@@ -1,5 +1,6 @@
 package user.profile.permission
 
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -12,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import user.profile.messageDTO.ResponseMessageDTO
-import user.profile.permission.dto.PermissionRequest
-import user.profile.permission.dto.PermissionResponse
+import user.profile.permission.dto.PermissionRequestDTO
 import java.util.UUID
 
 @RestController
@@ -21,8 +21,8 @@ import java.util.UUID
 class PermissionController(val permissionService: PermissionService) {
     // GET /api/permissions
     @GetMapping("list")
-    fun getAllPermissions(): ResponseEntity<ResponseMessageDTO> {
-        val response = permissionService.getAllPermissions()
+    fun getAllPermissions(pageable: Pageable): ResponseEntity<ResponseMessageDTO> {
+        val response = permissionService.getAllPermissions(pageable)
         return ResponseEntity
             .status(response.code)
             .body(response)
@@ -43,7 +43,7 @@ class PermissionController(val permissionService: PermissionService) {
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     fun createPermission(
-        @RequestBody request: PermissionRequest
+        @RequestBody request: PermissionRequestDTO
     ): ResponseEntity<ResponseMessageDTO> {
         val response = permissionService.createPermission(request)
         return ResponseEntity
@@ -55,7 +55,7 @@ class PermissionController(val permissionService: PermissionService) {
     @PutMapping("/update/{id}")
     fun updatePermission(
         @PathVariable id: UUID,
-        @RequestBody request: PermissionRequest
+        @RequestBody request: PermissionRequestDTO
     ): ResponseEntity<ResponseMessageDTO> {
         val response = permissionService.updatePermission(
             id,

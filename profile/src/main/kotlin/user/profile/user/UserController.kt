@@ -1,5 +1,6 @@
 package user.profile.user
 
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -12,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import user.profile.messageDTO.ResponseMessageDTO
-import user.profile.user.dto.ApplyRoleRequest
+import user.profile.user.dto.ApplyRoleRequestDTO
 import user.profile.user.dto.CreateUserRequestDTO
-import user.profile.user.dto.RemoveRoleRequest
+import user.profile.user.dto.RemoveRoleRequestDTO
 import user.profile.user.dto.UpdatePasswordRequestDTO
 import user.profile.user.dto.UpdateUserRequestDTO
 import java.util.UUID
@@ -25,8 +26,8 @@ class UserController(private val userService: UserService) {
 
     //  Get /api/users/list
     @GetMapping("/list")
-    fun getAllUsers(): ResponseEntity<ResponseMessageDTO> {
-        val response =  userService.getAllUsers()
+    fun getAllUsers(pageable: Pageable): ResponseEntity<ResponseMessageDTO> {
+        val response =  userService.getAllUsers(pageable)
         return ResponseEntity
             .status(response.code)
             .body(response)
@@ -86,7 +87,7 @@ class UserController(private val userService: UserService) {
     // APPLY ROLE TO USER
     @PutMapping("apply-role")
     fun applyRoleToUser(
-        @RequestBody request: ApplyRoleRequest
+        @RequestBody request: ApplyRoleRequestDTO
     ): ResponseEntity<ResponseMessageDTO> {
         val response = userService.applyRoleToUser(request)
         return ResponseEntity
@@ -97,7 +98,7 @@ class UserController(private val userService: UserService) {
     // REMOVE ROLE FROM USER
     @PutMapping("remove-role")
     fun removeRoleFromUser(
-        @RequestBody request: RemoveRoleRequest
+        @RequestBody request: RemoveRoleRequestDTO
     ): ResponseEntity<ResponseMessageDTO> {
         val response = userService.removeRoleFromUser(request)
         return ResponseEntity

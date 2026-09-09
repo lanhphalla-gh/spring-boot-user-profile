@@ -9,13 +9,12 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import user.profile.role.Role
-import user.profile.rolepermission.dto.RolePermissionRequest
+import user.profile.role.RoleEntity
 import java.util.UUID
 
 @Entity
 @Table(name = "users")
-class User {
+class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,5 +31,5 @@ class User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
-    var role: Role? = null
+    var role: RoleEntity? = null
 }

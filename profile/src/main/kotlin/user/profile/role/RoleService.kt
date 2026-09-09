@@ -1,7 +1,9 @@
 package user.profile.role
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import user.profile.messageDTO.ResponseMessageDTO
-import user.profile.role.dto.RoleRequest
+import user.profile.role.dto.RoleRequestDTO
+import user.profile.role.dto.RoleResponseDTO
 import java.util.UUID
 
 @Service
@@ -9,13 +11,19 @@ class RoleService(
     private val roleRepository: RoleRepository
 ) {
     // GET ALL
-    fun getAllRoles(): ResponseMessageDTO {
-        val role = roleRepository.findAll()
+    fun getAllRoles(pageable: Pageable): ResponseMessageDTO {
+        val roles = roleRepository.findAll(pageable)
+            .map { role ->
+                RoleResponseDTO(
+                    id = role.id,
+                    name = role.name
+                )
+            }
         return ResponseMessageDTO(
             status = "Success",
             code = 200,
             message = "Role get successfully",
-            data = role
+            data = roles
         )
     }
 
@@ -42,7 +50,7 @@ class RoleService(
     }
 
     // CREATE
-    fun createRole(request: RoleRequest): ResponseMessageDTO {
+    fun createRole(request: RoleRequestDTO): ResponseMessageDTO {
 
         // Check role name
         if (roleRepository.existsByName(request.name)) {
@@ -55,7 +63,7 @@ class RoleService(
 
         // Create role
         // Create object first and assign the properties
-        val role = Role()
+        val role = RoleEntity()
         role.name = request.name
 
         // Save role
@@ -69,7 +77,7 @@ class RoleService(
     }
 
     // UPDATE
-    fun updateRole(id: UUID, request: RoleRequest): ResponseMessageDTO {
+    fun updateRole(id: UUID, request: RoleRequestDTO): ResponseMessageDTO {
 
 
         // 1. Find existing role

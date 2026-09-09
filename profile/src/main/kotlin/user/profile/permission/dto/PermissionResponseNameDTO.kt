@@ -1,5 +1,5 @@
 package user.profile.permission.dto
 
-data class PermissionRequest(
+data class PermissionResponseNameDTO(
     val name: String
 )

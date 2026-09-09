@@ -1,5 +1,6 @@
 package user.profile.rolepermission
 
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import user.profile.messageDTO.ResponseMessageDTO
-import user.profile.rolepermission.dto.RolePermissionRequest
+import user.profile.rolepermission.dto.RolePermissionRequestDTO
 import java.util.UUID
 
 @RestController
@@ -19,9 +20,9 @@ class RolePermissionController(
 ) {
     // GET /api/role-permissions
     @GetMapping("/list")
-    fun getAllRolePermissions(): ResponseEntity<ResponseMessageDTO> {
+    fun getAllRolePermissions(pageable: Pageable): ResponseEntity<ResponseMessageDTO> {
 
-        val response = rolePermissionService.getAllRolePermissions()
+        val response = rolePermissionService.getAllRolePermissions(pageable)
         return ResponseEntity
             .status(response.code)
             .body(response)
@@ -30,7 +31,7 @@ class RolePermissionController(
     // POST /api/role-permissions
     @PostMapping("/create")
     fun createRolePermission(
-        @RequestBody request: RolePermissionRequest
+        @RequestBody request: RolePermissionRequestDTO
     ): ResponseEntity<ResponseMessageDTO> {
 
         val response = rolePermissionService.createRolePermission(request)
@@ -42,7 +43,7 @@ class RolePermissionController(
     // Remove ONE permission
     @DeleteMapping("/removepermission")
     fun removePermissionFromRole(
-        @RequestBody request: RolePermissionRequest
+        @RequestBody request: RolePermissionRequestDTO
     ): ResponseEntity<ResponseMessageDTO> {
         val response = rolePermissionService.removePermissionFromRole(request)
 

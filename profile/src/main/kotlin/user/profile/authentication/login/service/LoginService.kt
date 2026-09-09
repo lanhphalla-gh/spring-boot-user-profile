@@ -6,8 +6,8 @@ import user.profile.configJWT.JwtService
 import user.profile.authentication.login.loginDTO.LoginRequestDTO
 import user.profile.authentication.login.loginDTO.LoginResultDTO
 import user.profile.authentication.login.repository.LoginRepository
-import user.profile.permission.dto.PermissionResponse
-import user.profile.role.dto.RoleResponse
+import user.profile.permission.dto.PermissionResponseDTO
+import user.profile.role.dto.RoleResponseDTO
 import user.profile.rolepermission.RolePermissionRepository
 
 @Service
@@ -67,8 +67,8 @@ class LoginService (
          * If the user does not have a role,
          * the role will be null.
          */
-        val role: RoleResponse? = user.role?.let {
-            RoleResponse(
+        val role: RoleResponseDTO? = user.role?.let {
+            RoleResponseDTO(
                 id = it.id!!,
                 name = it.name!!
             )
@@ -92,7 +92,7 @@ class LoginService (
          * Then convert each Permission entity
          * into PermissionResponse DTO.
          */
-        val permissions: List<PermissionResponse> =
+        val permissions: List<PermissionResponseDTO> =
             if (user.role?.id != null) {
 
                 rolePermissionRepository
@@ -107,7 +107,7 @@ class LoginService (
                          * mapNotNull automatically removes null values.
                          */
                         rolePermission.permission?.let { permission ->
-                            PermissionResponse(
+                            PermissionResponseDTO(
                                 id = permission.id!!,
                                 name = permission.name
                             )

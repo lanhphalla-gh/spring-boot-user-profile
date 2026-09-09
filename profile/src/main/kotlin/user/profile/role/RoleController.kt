@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import user.profile.messageDTO.ResponseMessageDTO
-import user.profile.role.dto.RoleRequest
-import user.profile.role.dto.RoleResponse
+
+import user.profile.role.dto.RoleRequestDTO
+import org.springframework.data.domain.Pageable
 import java.util.UUID
 
 @RestController
@@ -21,10 +22,10 @@ import java.util.UUID
 class RoleController(
     private val roleService: RoleService
 ) {
-    //GET /api/roles
+    //GET /api/roles?page=0&size=10&sort=name,asc
     @GetMapping("/list")
-    fun getAllRoles(): ResponseEntity<ResponseMessageDTO> {
-        val response = roleService.getAllRoles()
+    fun getAllRoles(pageable: Pageable): ResponseEntity<ResponseMessageDTO> {
+        val response = roleService.getAllRoles(pageable)
         return ResponseEntity
             .status(response.code)
             .body(response)
@@ -43,7 +44,7 @@ class RoleController(
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     fun createRole(
-        @RequestBody request: RoleRequest
+        @RequestBody request: RoleRequestDTO
     ): ResponseEntity<ResponseMessageDTO> {
         val response = roleService.createRole(request)
         return ResponseEntity
@@ -55,7 +56,7 @@ class RoleController(
     @PutMapping("/update/{id}")
     fun updateRole(
         @PathVariable id: UUID,
-        @RequestBody request: RoleRequest
+        @RequestBody request: RoleRequestDTO
     ): ResponseEntity<ResponseMessageDTO>{
         val response = roleService.updateRole(id, request)
         return ResponseEntity

@@ -10,7 +10,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "permissions")
-class Permission (
+class PermissionEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null,

@@ -1,12 +1,13 @@
 package user.profile.rolepermission
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import user.profile.messageDTO.ResponseMessageDTO
 import user.profile.permission.PermissionRepository
-import user.profile.permission.dto.PermissionResponse
+import user.profile.permission.dto.PermissionResponseDTO
 import user.profile.role.RoleRepository
-import user.profile.role.dto.RoleResponse
-import user.profile.rolepermission.dto.RolePermissionRequest
-import user.profile.rolepermission.dto.RolePermissionResponse
+import user.profile.role.dto.RoleResponseDTO
+import user.profile.rolepermission.dto.RolePermissionRequestDTO
+import user.profile.rolepermission.dto.RolePermissionResponseDTO
 import java.util.UUID
 
 @Service
@@ -16,9 +17,9 @@ class RolePermissionService(
     private val permissionRepository: PermissionRepository
 ) {
     // GET ALL
-    fun getAllRolePermissions(): ResponseMessageDTO{
+    fun getAllRolePermissions(pageable: Pageable): ResponseMessageDTO{
 
-        val rolePermissions = rolePermissionRepository.findAll()
+        val rolePermissions = rolePermissionRepository.findAll(pageable)
         val response = rolePermissions
             .filter {
                 it.role != null && it.permission != null
@@ -28,14 +29,14 @@ class RolePermissionService(
             }
             .map { (_, items) ->
                 val role = items.first().role!!
-                RolePermissionResponse(
-                    role = RoleResponse(
+                RolePermissionResponseDTO(
+                    role = RoleResponseDTO(
                         id = role.id!!,
                         name = role.name!!,
                     ),
                     permissions = items.map { item ->
                         val permission = item.permission!!
-                        PermissionResponse(
+                        PermissionResponseDTO(
                             id = permission.id!!,
                             name = permission.name,
                         )
@@ -51,7 +52,7 @@ class RolePermissionService(
     }
 
     // CREATE
-    fun createRolePermission(request: RolePermissionRequest): ResponseMessageDTO {
+    fun createRolePermission(request: RolePermissionRequestDTO): ResponseMessageDTO {
 
         // 1. Check duplicate
         if (
@@ -68,7 +69,7 @@ class RolePermissionService(
         }
 
         // 2. Create RolePermission
-        val rolePermission = RolePermission()
+        val rolePermission = RolePermissionEntity()
         val checkRole = roleRepository.findById(request.roleId).orElse(null)
         val permission = permissionRepository.findById(request.permissionId).orElse(null)
         rolePermission.role = checkRole
@@ -86,7 +87,7 @@ class RolePermissionService(
 
     // DELETE ONE PERMISSION FROM ROLE
     fun removePermissionFromRole(
-        request: RolePermissionRequest
+        request: RolePermissionRequestDTO
     ): ResponseMessageDTO {
 
         // 1. Find the relationship

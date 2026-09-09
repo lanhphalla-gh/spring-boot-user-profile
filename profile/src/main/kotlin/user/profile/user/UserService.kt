@@ -1,5 +1,6 @@
 package user.profile.user
 
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import user.profile.role.RoleRepository
 import user.profile.user.dto.CreateUserRequestDTO
@@ -8,8 +9,9 @@ import user.profile.user.dto.UpdateUserRequestDTO
 import java.util.UUID
 import org.springframework.security.crypto.password.PasswordEncoder
 import user.profile.messageDTO.ResponseMessageDTO
-import user.profile.user.dto.ApplyRoleRequest
-import user.profile.user.dto.RemoveRoleRequest
+import user.profile.user.dto.ApplyRoleRequestDTO
+import user.profile.user.dto.RemoveRoleRequestDTO
+import user.profile.user.dto.UserResponseDTO
 import user.profile.user.mapper.toResponse
 
 @Service
@@ -19,13 +21,22 @@ class UserService(
     private val passwordEncoder: PasswordEncoder
 ) {
     // GET all users
-    fun getAllUsers(): ResponseMessageDTO {
-        val user = userRepository.findAll()
+    fun getAllUsers(pageable: Pageable): ResponseMessageDTO {
+        val users = userRepository.findAll(pageable)
+            .map { user ->
+                UserResponseDTO(
+                    id = user.id,
+                    username = user.username,
+                    email = user.email,
+                    role = user.role?.name
+                )
+
+            }
         return ResponseMessageDTO(
             status = "Success",
             code = 200,
             message = "User get successfully",
-            data = user.map { it.toResponse() }
+            data = users
         )
 
     }
@@ -86,7 +97,7 @@ class UserService(
 
         // Create user
         // Create the object first and assign the properties
-        val user = User()
+        val user = UserEntity()
         user.username = request.username
         user.email = request.email
         user.password = passwordEncoder.encode(request.password)
@@ -205,7 +216,7 @@ class UserService(
     }
 
     // APPLY ROLE TO USER
-    fun applyRoleToUser(request: ApplyRoleRequest): ResponseMessageDTO {
+    fun applyRoleToUser(request: ApplyRoleRequestDTO): ResponseMessageDTO {
         val user = userRepository.findById(request.userId)
             .orElse(null)
         if (user == null) {
@@ -236,7 +247,7 @@ class UserService(
     }
 
     // REMOVE ROLE FROM USER
-    fun removeRoleFromUser(request: RemoveRoleRequest): ResponseMessageDTO {
+    fun removeRoleFromUser(request: RemoveRoleRequestDTO): ResponseMessageDTO {
         val user = userRepository.findById(request.userId)
         .orElse(null)
         if (user == null) {
