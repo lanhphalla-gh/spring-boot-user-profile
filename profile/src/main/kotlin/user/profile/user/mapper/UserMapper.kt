@@ -10,11 +10,6 @@ fun UserEntity.toResponse(): UserResponseDTO {
         id = this.id!!,
         username = this.username!!,
         email = this.email!!,
-        role = this.role?.let {
-            RoleResponseDTO(
-                id = it.id,
-                name = it.name
-            )
-        }
+        role = this.role?.name
     )
 }
