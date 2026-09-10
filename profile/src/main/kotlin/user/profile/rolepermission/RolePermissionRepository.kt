@@ -5,10 +5,6 @@ import java.util.UUID
 
 interface RolePermissionRepository :
     JpaRepository<RolePermissionEntity, UUID> {
-    fun findByRoleId(
-        roleId: UUID
-    ): List<RolePermissionEntity>
-
     fun existsByRoleIdAndPermissionId(
         roleId: UUID,
         permissionId: UUID
@@ -18,4 +14,12 @@ interface RolePermissionRepository :
         roleId: UUID,
         permissionId: UUID
     ): RolePermissionEntity?
+
+    fun findByRoleId(
+        roleId: UUID
+    ): List<RolePermissionEntity>
+
+    fun findByRoleIdIn(
+        roleIds: List<UUID>
+    ): List<RolePermissionEntity>
 }

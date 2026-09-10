@@ -19,30 +19,55 @@ class RolePermissionService(
     // GET ALL
     fun getAllRolePermissions(pageable: Pageable): ResponseMessageDTO{
 
-        val rolePermissions = rolePermissionRepository.findAll(pageable)
-        val response = rolePermissions
+        // 1. Get Roles with pagination
+        val rolePage = roleRepository.findAll(pageable)
+
+        // 2. Get Role IDs from current page
+        val roleIds = rolePage.content.mapNotNull { it.id }
+
+        // 3. Get all RolePermission records for these Roles
+        //    ONE query only
+        val rolePermissions = if (roleIds.isNotEmpty()) {
+            rolePermissionRepository.findByRoleIdIn(roleIds)
+        } else {
+            emptyList()
+        }
+
+        // 4. Group permissions by Role ID
+        val permissionsByRole = rolePermissions
             .filter {
                 it.role != null && it.permission != null
             }
             .groupBy {
                 it.role!!.id!!
             }
-            .map { (_, items) ->
-                val role = items.first().role!!
-                RolePermissionResponseDTO(
-                    role = RoleResponseDTO(
-                        id = role.id!!,
-                        name = role.name!!,
-                    ),
-                    permissions = items.map { item ->
-                        val permission = item.permission!!
-                        PermissionResponseDTO(
-                            id = permission.id!!,
-                            name = permission.name,
-                        )
-                    }
-                )
-            }
+
+        // 5. Build response
+        val response = rolePage.content.map { role ->
+
+            val roleId = role.id!!
+
+            val permissions = permissionsByRole[roleId]
+                ?.map { rolePermission ->
+
+                    val permission = rolePermission.permission!!
+
+                    PermissionResponseDTO(
+                        id = permission.id!!,
+                        name = permission.name
+                    )
+                }
+                ?: emptyList()
+
+            RolePermissionResponseDTO(
+                role = RoleResponseDTO(
+                    id = roleId,
+                    name = role.name!!
+                ),
+                permissions = permissions
+            )
+        }
+
         return ResponseMessageDTO(
             status = "Success",
             code = 200,
