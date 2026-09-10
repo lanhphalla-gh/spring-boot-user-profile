@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import user.profile.contact.contactDTO.ApproveContactRequestDTO
 import user.profile.contact.contactDTO.ContactRequestDTO
 import user.profile.contact.contactDTO.ContactResponseDTO
 import user.profile.contact.service.ContactService
@@ -104,11 +105,12 @@ class ContactController(
 
     @PutMapping("/contact-request/{id}/approve")
     fun approveContactRequest(
-        @PathVariable id: UUID
+        @PathVariable id: UUID,
+        @RequestBody request: ApproveContactRequestDTO
     ): ResponseEntity<ContactResponseDTO> {
 
         val response =
-            contactService.approveContactRequest(id)
+            contactService.approveContactRequest(id, request)
 
         return ResponseEntity.ok(response)
     }

@@ -1,16 +1,24 @@
 package user.profile.contact.service
 
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import user.profile.contact.ContactRepository
 import user.profile.contact.ContactRequestEntity
+import user.profile.contact.contactDTO.ApproveContactRequestDTO
 import user.profile.contact.contactDTO.ContactRequestDTO
 import user.profile.contact.contactDTO.ContactResponseDTO
+import user.profile.role.RoleRepository
+import user.profile.user.UserRepository
+import user.profile.user.dto.CreateUserRequestContactDTO
 import java.util.UUID
 
 @Service
 class ContactService(
     private val contactRepository: ContactRepository,
     private val contactEmailService: ContactEmailService,
+    private val roleRepository: RoleRepository,
+    private val passwordEncoder: PasswordEncoder,
+    private val userRepository: UserRepository,
 ) {
 
     // ========================================
@@ -90,9 +98,11 @@ class ContactService(
     // ========================================
 
     fun approveContactRequest(
-        id: UUID
+        id: UUID,
+        request: ApproveContactRequestDTO
     ): ContactResponseDTO {
 
+        // 1. Find contact request
         val contactRequest =
             contactRepository.findById(id)
                 .orElseThrow {
@@ -101,11 +111,43 @@ class ContactService(
                     )
                 }
 
+        // 2. Check already approved
+        if (contactRequest.status == "APPROVED") {
+            throw RuntimeException("Contact request already approved")
+        }
+
+        // 3. Find selected role
+        val role = roleRepository.findById(request.roleId)
+            .orElseThrow {
+                RuntimeException("Role not found ${request.roleId}")
+            }
+
+
+        // 4. Create User from contact Request
+        val user = CreateUserRequestContactDTO(
+            username = contactRequest.username,
+            email = contactRequest.email,
+            password = passwordEncoder.encode(request.password),
+            roleId = role.id
+        )
+
+        // Save User
+        userRepository.save(user)
+
+        // 6. Update Contact Request
         contactRequest.status = "APPROVED"
 
         val updatedRequest =
             contactRepository.save(contactRequest)
 
+        // 7. Send email
+        contactEmailService.sendApprovedEmail(
+            email = contactRequest.email!!,
+            username = contactRequest.username!!,
+            password = request.password
+        )
+
+        // 8. Return response
         return toResponse(updatedRequest)
     }
 

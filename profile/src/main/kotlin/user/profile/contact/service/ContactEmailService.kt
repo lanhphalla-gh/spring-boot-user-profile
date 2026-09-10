@@ -21,7 +21,13 @@ class ContactEmailService(
         .baseUrl("https://api.resend.com")
         .build()
 
-    fun sendContactRequestEmail(request: ContactRequestDTO) {
+    // ========================================
+    // Send Contact Request Email
+    // ========================================
+
+    fun sendContactRequestEmail(
+        request: ContactRequestDTO
+    ) {
 
         val subject =
             "User Account Request - ${request.username}"
@@ -64,7 +70,6 @@ class ContactEmailService(
             </p>
         """.trimIndent()
 
-
         restClient.post()
             .uri("/emails")
             .header(
@@ -76,6 +81,74 @@ class ContactEmailService(
                 mapOf(
                     "from" to fromEmail,
                     "to" to listOf(adminEmail),
+                    "subject" to subject,
+                    "html" to htmlBody
+                )
+            )
+            .retrieve()
+            .toBodilessEntity()
+    }
+
+
+    // ========================================
+    // Send Approved Account Email
+    // ========================================
+
+    fun sendApprovedEmail(
+        email: String,
+        username: String,
+        password: String
+    ) {
+
+        val subject =
+            "Your User Account Has Been Approved"
+
+        val htmlBody = """
+            <h2>User Account Approved</h2>
+
+            <p>
+                Your account request has been approved by the administrator.
+            </p>
+
+            <hr>
+
+            <p>
+                <strong>Username:</strong>
+                $username
+            </p>
+
+            <p>
+                <strong>Password:</strong>
+                $password
+            </p>
+
+            <p>
+                <strong>Login Email:</strong>
+                $email
+            </p>
+
+            <hr>
+
+            <p>
+                You can now use these credentials to log in to the system.
+            </p>
+
+            <p>
+                Please keep your password secure.
+            </p>
+        """.trimIndent()
+
+        restClient.post()
+            .uri("/emails")
+            .header(
+                "Authorization",
+                "Bearer $resendApiKey"
+            )
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(
+                mapOf(
+                    "from" to fromEmail,
+                    "to" to listOf(email),
                     "subject" to subject,
                     "html" to htmlBody
                 )
