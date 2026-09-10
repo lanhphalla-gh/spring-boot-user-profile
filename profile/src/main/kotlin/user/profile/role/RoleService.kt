@@ -10,9 +10,26 @@ import java.util.UUID
 class RoleService(
     private val roleRepository: RoleRepository
 ) {
-    // GET ALL
-    fun getAllRoles(pageable: Pageable): ResponseMessageDTO {
+    // GET List
+    fun getListRoles(pageable: Pageable): ResponseMessageDTO {
         val roles = roleRepository.findAll(pageable)
+            .map { role ->
+                RoleResponseDTO(
+                    id = role.id,
+                    name = role.name
+                )
+            }
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "Role List get successfully",
+            data = roles
+        )
+    }
+
+    // GET ALL
+    fun getAllRoles(): ResponseMessageDTO {
+        val roles = roleRepository.findAll()
             .map { role ->
                 RoleResponseDTO(
                     id = role.id,

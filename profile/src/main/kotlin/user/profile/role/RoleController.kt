@@ -22,10 +22,19 @@ import java.util.UUID
 class RoleController(
     private val roleService: RoleService
 ) {
-    //GET /api/roles?page=0&size=10&sort=name,asc
+    //GET /api/roles/list?page=0&size=10&sort=name,asc
     @GetMapping("/list")
-    fun getAllRoles(pageable: Pageable): ResponseEntity<ResponseMessageDTO> {
-        val response = roleService.getAllRoles(pageable)
+    fun getListRoles(pageable: Pageable): ResponseEntity<ResponseMessageDTO> {
+        val response = roleService.getListRoles(pageable)
+        return ResponseEntity
+            .status(response.code)
+            .body(response)
+    }
+
+    //GET /api/roles/all
+    @GetMapping("/all")
+    fun getAllRoles(): ResponseEntity<ResponseMessageDTO> {
+        val response = roleService.getAllRoles()
         return ResponseEntity
             .status(response.code)
             .body(response)
