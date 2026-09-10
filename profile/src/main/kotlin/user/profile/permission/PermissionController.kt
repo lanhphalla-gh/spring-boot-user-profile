@@ -20,9 +20,17 @@ import java.util.UUID
 @RequestMapping("/api/permission")
 class PermissionController(val permissionService: PermissionService) {
     // GET /api/permissions
-    @GetMapping("list")
+    @GetMapping("/list")
     fun getAllPermissions(pageable: Pageable): ResponseEntity<ResponseMessageDTO> {
-        val response = permissionService.getAllPermissions(pageable)
+        val response = permissionService.getListPermissions(pageable)
+        return ResponseEntity
+            .status(response.code)
+            .body(response)
+    }
+
+    @GetMapping("/all")
+    fun getPermissions(): ResponseEntity<ResponseMessageDTO> {
+        val response = permissionService.getAllPermissions()
         return ResponseEntity
             .status(response.code)
             .body(response)

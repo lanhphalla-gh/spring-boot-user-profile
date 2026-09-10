@@ -11,9 +11,20 @@ import java.util.UUID
 class PermissionService(
     private val permissionRepository: PermissionRepository
 ) {
-    // GET ALL
-    fun getAllPermissions(pageable: Pageable): ResponseMessageDTO {
+    // GET List
+    fun getListPermissions(pageable: Pageable): ResponseMessageDTO {
         val response = permissionRepository.findAll(pageable)
+        return ResponseMessageDTO (
+            status = "Success",
+            code = 200,
+            message = "Permissions get successfully",
+            data = response
+        )
+    }
+
+    // GET ALL
+    fun getAllPermissions(): ResponseMessageDTO {
+        val response = permissionRepository.findAll()
         return ResponseMessageDTO (
             status = "Success",
             code = 200,
