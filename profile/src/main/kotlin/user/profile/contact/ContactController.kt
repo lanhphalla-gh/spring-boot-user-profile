@@ -69,7 +69,7 @@ class ContactController(
     // Get Pending Request Count
     // ========================================
 
-    @GetMapping("/pending/count")
+    @GetMapping("/count")
     fun getPendingCount():
             ResponseEntity<ContactRequestCountResponseDTO> {
 
