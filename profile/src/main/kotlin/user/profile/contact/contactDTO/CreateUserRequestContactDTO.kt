@@ -1,4 +1,4 @@
-package user.profile.user.dto
+package user.profile.contact.contactDTO
 
 import java.util.UUID
 

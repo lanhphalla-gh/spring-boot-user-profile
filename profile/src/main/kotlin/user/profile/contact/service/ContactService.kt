@@ -11,7 +11,8 @@ import user.profile.contact.contactDTO.ContactRequestDTO
 import user.profile.contact.contactDTO.ContactResponseDTO
 import user.profile.role.RoleRepository
 import user.profile.user.UserRepository
-import user.profile.user.dto.CreateUserRequestContactDTO
+import user.profile.contact.contactDTO.CreateUserRequestContactDTO
+import user.profile.user.UserEntity
 import java.util.UUID
 
 @Service
@@ -131,38 +132,53 @@ class ContactService(
             throw RuntimeException("Contact request already approved")
         }
 
-        // 3. Find selected role
+        // 3. Check username already exists
+        if (userRepository.existsByUsername(contactRequest.username!!)) {
+            throw RuntimeException(
+                "Username already exists: ${contactRequest.username}"
+            )
+        }
+
+        // 4. Check email already exists
+        if (userRepository.existsByEmail(contactRequest.email!!)) {
+            throw RuntimeException(
+                "Email already exists: ${contactRequest.email}"
+            )
+        }
+
+        // 5. Find selected role
         val role = roleRepository.findById(request.roleId)
             .orElseThrow {
-                RuntimeException("Role not found ${request.roleId}")
+                RuntimeException(
+                    "Role not found: ${request.roleId}"
+                )
             }
 
+        // 6. Create UserEntity
+        val user = UserEntity()
 
-        // 4. Create User from contact Request
-        val user = CreateUserRequestContactDTO(
-            username = contactRequest.username,
-            email = contactRequest.email,
-            password = passwordEncoder.encode(request.password),
-            roleId = role.id
-        )
+        user.username = contactRequest.username
+        user.email = contactRequest.email
+        user.password = passwordEncoder.encode(request.password)
+        user.role = role
 
-        // Save User
+        // 7. Save user
         userRepository.save(user)
 
-        // 6. Update Contact Request
+        // 8. Update Contact Request
         contactRequest.status = ContactRequestStatus.APPROVED
 
         val updatedRequest =
             contactRepository.save(contactRequest)
 
-        // 7. Send email
+        // 9. Send email
         contactEmailService.sendApprovedEmail(
             email = contactRequest.email!!,
             username = contactRequest.username!!,
             password = request.password
         )
 
-        // 8. Return response
+        // 10. Return response
         return toResponse(updatedRequest)
     }
 
