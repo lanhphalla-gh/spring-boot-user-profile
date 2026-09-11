@@ -4,7 +4,9 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import user.profile.contact.ContactRepository
 import user.profile.contact.ContactRequestEntity
+import user.profile.contact.contactEnum.ContactRequestStatus
 import user.profile.contact.contactDTO.ApproveContactRequestDTO
+import user.profile.contact.contactDTO.ContactRequestCountResponseDTO
 import user.profile.contact.contactDTO.ContactRequestDTO
 import user.profile.contact.contactDTO.ContactResponseDTO
 import user.profile.role.RoleRepository
@@ -36,7 +38,7 @@ class ContactService(
         contactRequest.email = request.email
         contactRequest.username = request.username
         contactRequest.message = request.message
-        contactRequest.status = "PENDING"
+        contactRequest.status = ContactRequestStatus.PENDING
 
         // Save request to database
         val savedRequest =
@@ -67,9 +69,22 @@ class ContactService(
     // Get Pending Request Count
     // ========================================
 
-    fun getPendingCount(): Long {
+    fun getContactRequestCount(): ContactRequestCountResponseDTO {
 
-        return contactRepository.countByStatus("PENDING")
+        val approved =
+            contactRepository.countByStatus(ContactRequestStatus.APPROVED)
+
+        val pending =
+            contactRepository.countByStatus(ContactRequestStatus.PENDING)
+
+        val rejected =
+            contactRepository.countByStatus(ContactRequestStatus.REJECTED)
+
+        return ContactRequestCountResponseDTO(
+            approved = approved,
+            pending = pending,
+            rejected = rejected
+        )
     }
 
 
@@ -112,7 +127,7 @@ class ContactService(
                 }
 
         // 2. Check already approved
-        if (contactRequest.status == "APPROVED") {
+        if (contactRequest.status == ContactRequestStatus.APPROVED) {
             throw RuntimeException("Contact request already approved")
         }
 
@@ -135,7 +150,7 @@ class ContactService(
         userRepository.save(user)
 
         // 6. Update Contact Request
-        contactRequest.status = "APPROVED"
+        contactRequest.status = ContactRequestStatus.APPROVED
 
         val updatedRequest =
             contactRepository.save(contactRequest)
@@ -168,7 +183,7 @@ class ContactService(
                     )
                 }
 
-        contactRequest.status = "REJECTED"
+        contactRequest.status = ContactRequestStatus.REJECTED
 
         val updatedRequest =
             contactRepository.save(contactRequest)
@@ -191,7 +206,7 @@ class ContactService(
             email = contactRequest.email!!,
             username = contactRequest.username!!,
             message = contactRequest.message,
-            status = contactRequest.status!!,
+            status = contactRequest.status.name,
             createdAt = contactRequest.createdAt,
             updatedAt = contactRequest.updatedAt
         )

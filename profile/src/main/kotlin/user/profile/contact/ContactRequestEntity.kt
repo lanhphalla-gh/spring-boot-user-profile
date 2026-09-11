@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import user.profile.contact.contactEnum.ContactRequestStatus
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -29,7 +30,7 @@ class ContactRequestEntity {
     var message: String? = null
 
     @Column(nullable = false)
-    var status: String? = null
+    var status: ContactRequestStatus = ContactRequestStatus.PENDING
 
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now()

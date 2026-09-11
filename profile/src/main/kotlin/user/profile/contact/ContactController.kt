@@ -10,20 +10,21 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import user.profile.contact.contactDTO.ApproveContactRequestDTO
+import user.profile.contact.contactDTO.ContactRequestCountResponseDTO
 import user.profile.contact.contactDTO.ContactRequestDTO
 import user.profile.contact.contactDTO.ContactResponseDTO
 import user.profile.contact.service.ContactService
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/contact-request")
 class ContactController(
     private val contactService: ContactService
 ) {
     private val logger =
         LoggerFactory.getLogger(ContactController::class.java)
 
-    @PostMapping("/contact-request")
+    @PostMapping("/")
     fun contactAdmin(
         @RequestBody request: ContactRequestDTO
     ): ResponseEntity<ContactResponseDTO> {
@@ -56,7 +57,7 @@ class ContactController(
 
     }
 
-    @GetMapping("/contact-request/list")
+    @GetMapping("/list")
     fun getContactRequestList(): ResponseEntity<List<ContactResponseDTO>> {
 
         return ResponseEntity.ok(
@@ -68,18 +69,13 @@ class ContactController(
     // Get Pending Request Count
     // ========================================
 
-    @GetMapping("/contact-request/pending/count")
+    @GetMapping("/pending/count")
     fun getPendingCount():
-            ResponseEntity<Map<String, Long>> {
+            ResponseEntity<ContactRequestCountResponseDTO> {
 
-        val count =
-            contactService.getPendingCount()
+        val count = contactService.getContactRequestCount()
 
-        return ResponseEntity.ok(
-            mapOf(
-                "count" to count
-            )
-        )
+        return ResponseEntity.ok(count)
     }
 
 
@@ -87,7 +83,7 @@ class ContactController(
     // Get Contact Request By ID
     // ========================================
 
-    @GetMapping("/contact-request/{id}")
+    @GetMapping("/{id}")
     fun getContactRequestById(
         @PathVariable id: UUID
     ): ResponseEntity<ContactResponseDTO> {
@@ -103,7 +99,7 @@ class ContactController(
     // Approve Contact Request
     // ========================================
 
-    @PutMapping("/contact-request/{id}/approve")
+    @PutMapping("/{id}/approve")
     fun approveContactRequest(
         @PathVariable id: UUID,
         @RequestBody request: ApproveContactRequestDTO
@@ -120,7 +116,7 @@ class ContactController(
     // Reject Contact Request
     // ========================================
 
-    @PutMapping("/contact-request/{id}/reject")
+    @PutMapping("/{id}/reject")
     fun rejectContactRequest(
         @PathVariable id: UUID
     ): ResponseEntity<ContactResponseDTO> {

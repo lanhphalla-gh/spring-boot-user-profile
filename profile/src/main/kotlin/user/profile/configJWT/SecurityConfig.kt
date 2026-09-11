@@ -61,9 +61,19 @@ class SecurityConfig(
                     // authentication or a JWT.
                     .requestMatchers(
                         "/",
-                        "/api/auth/login",
-                        "/api/contact-request/**"
+                        "/api/auth/login"
                     ).permitAll()
+
+                    // Public contact request submission
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/api/contact-request"
+                    ).permitAll()
+
+                    // Admin contact request management
+                    .requestMatchers(
+                        "/api/contact-request/**"
+                    ).authenticated()
 
                     // User management requires authentication.
                     .requestMatchers("/api/user/**").authenticated()
