@@ -1,5 +1,7 @@
 package user.profile.contact.service
 
+import org.springframework.data.domain.Pageable
+import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import user.profile.contact.ContactRepository
@@ -9,9 +11,9 @@ import user.profile.contact.contactDTO.ApproveContactRequestDTO
 import user.profile.contact.contactDTO.ContactRequestCountResponseDTO
 import user.profile.contact.contactDTO.ContactRequestDTO
 import user.profile.contact.contactDTO.ContactResponseDTO
+import user.profile.messageDTO.ResponseMessageDTO
 import user.profile.role.RoleRepository
 import user.profile.user.UserRepository
-import user.profile.contact.contactDTO.CreateUserRequestContactDTO
 import user.profile.user.UserEntity
 import java.util.UUID
 
@@ -57,12 +59,27 @@ class ContactService(
     // Get Contact Request List
     // ========================================
 
-    fun getContactRequestList(): List<ContactResponseDTO> {
-
-        return contactRepository.findAll()
+    fun getContactRequestList(pageable: Pageable): ResponseMessageDTO{
+        val contactRequestList = contactRepository.findAll(pageable)
             .map { contactRequest ->
-                toResponse(contactRequest)
+                ContactResponseDTO(
+                    id = contactRequest.id!!,
+                    fullName = contactRequest.fullName!!,
+                    email = contactRequest.email!!,
+                    username = contactRequest.username!!,
+                    message = contactRequest.message,
+                    status = contactRequest.status.name,
+                    createdAt = contactRequest.createdAt,
+                    updatedAt = contactRequest.updatedAt,
+                )
             }
+
+        return ResponseMessageDTO(
+            status = "Success",
+            code = 200,
+            message = "Contact request list get successfully",
+            data = contactRequestList
+        )
     }
 
 
@@ -110,7 +127,7 @@ class ContactService(
 
 
     // ========================================
-    // Approve Contact Request
+    // Approved Contact Request
     // ========================================
 
     fun approveContactRequest(

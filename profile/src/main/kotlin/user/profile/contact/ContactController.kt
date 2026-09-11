@@ -1,6 +1,7 @@
 package user.profile.contact
 
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,6 +15,7 @@ import user.profile.contact.contactDTO.ContactRequestCountResponseDTO
 import user.profile.contact.contactDTO.ContactRequestDTO
 import user.profile.contact.contactDTO.ContactResponseDTO
 import user.profile.contact.service.ContactService
+import user.profile.messageDTO.ResponseMessageDTO
 import java.util.UUID
 
 @RestController
@@ -58,11 +60,11 @@ class ContactController(
     }
 
     @GetMapping("/list")
-    fun getContactRequestList(): ResponseEntity<List<ContactResponseDTO>> {
-
-        return ResponseEntity.ok(
-            contactService.getContactRequestList()
-        )
+    fun getContactRequestList(pageable: Pageable): ResponseEntity<ResponseMessageDTO> {
+        val response = contactService.getContactRequestList(pageable)
+        return ResponseEntity
+            .status(response.code)
+            .body(response)
     }
 
     // ========================================
