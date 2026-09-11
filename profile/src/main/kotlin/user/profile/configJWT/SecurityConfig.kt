@@ -67,7 +67,7 @@ class SecurityConfig(
                     // Public contact request submission
                     .requestMatchers(
                         HttpMethod.POST,
-                        "/api/contact-request"
+                        "/api/contact-request/create"
                     ).permitAll()
 
                     // Admin contact request management

@@ -24,7 +24,7 @@ class ContactController(
     private val logger =
         LoggerFactory.getLogger(ContactController::class.java)
 
-    @PostMapping("/")
+    @PostMapping("/create")
     fun contactAdmin(
         @RequestBody request: ContactRequestDTO
     ): ResponseEntity<ContactResponseDTO> {
