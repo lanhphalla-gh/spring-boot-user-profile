@@ -87,6 +87,31 @@ class SecurityConfig(
                     // Role-permission management requires authentication.
                     .requestMatchers("/api/role-permission/**").authenticated()
 
+                    // ========================================= // ROOM MANAGEMENT // =========================================
+                    // 1. Rooms
+                    .requestMatchers( "/api/rooms/**" ).authenticated()
+
+                    // 2. Room Members
+                    .requestMatchers( "/api/room-members/**" ).authenticated()
+
+                    // 3. Payment Rotation
+                    .requestMatchers( "/api/payment-rotation/**" ).authenticated()
+
+                    // 4. Room Leader Assignments
+                    .requestMatchers( "/api/room-leader-assignments/**" ).authenticated()
+
+                    // 5. Room Payments
+                    .requestMatchers( "/api/room-payments/**" ).authenticated()
+
+                    // 6. Room Payment Members
+                    .requestMatchers( "/api/room-payment-members/**" ).authenticated()
+
+                    // 7. Member Payments
+                    .requestMatchers( "/api/member-payments/**" ).authenticated()
+
+                    // 8. Owner Payments
+                    .requestMatchers( "/api/owner-payments/**" ).authenticated()
+
                     // Everything else requires authentication.
                     .anyRequest().authenticated()
             }
