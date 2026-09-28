@@ -16,8 +16,9 @@ class CorsConfig : WebMvcConfigurer {
 
         // Vue frontend
         configuration.allowedOrigins = listOf(
-            "http://localhost:5173",
-            "https://vuejs-user-profile.onrender.com"
+            "http://localhost:5173", // Vue
+            "http://localhost:3000", // Nuxt
+            "https://vuejs-user-profile.onrender.com" // Vue hosting
         )
 
         // Allow HTTP methods
